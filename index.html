@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-physics-system@1.4.0/dist/aframe-physics-system.min.js"></script>
+  </head>
+  <body>
+    <a-scene physics background="color: #ccddff">
+      <a-box id="dropped" position="-1 4 -3" rotation="40 45 0" color="#5577D9" dynamic-body></a-box>
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="brown" static-body></a-plane>
+    </a-scene>
+  </body>
+   <script>
+    s=new THREE.Quaternion().setFromEuler(new THREE.Euler(THREE.Math.degToRad(45),THREE.Math.degToRad(45),0,'XYZ')).toArray().toString();
+	q=new THREE.Quaternion().setFromEuler(new THREE.Euler(THREE.Math.degToRad(45),THREE.Math.degToRad(45),0,'XYZ'));
+	e=new THREE.Euler(THREE.Math.degToRad(45),THREE.Math.degToRad(45),0,'XYZ');
+    window.addEventListener('click', function () {
+       // METHOD2 - MOVE THE EXISTING ORANGE
+      document.querySelector("#dropped").body.position.set(-1, 4, -3);
+      document.querySelector("#dropped").body.velocity.set(0, 0, 0);
+      document.querySelector("#dropped").body.angularVelocity.set(0, 0, 0);
+      document.querySelector("#dropped").body.quaternion.set(q.x,q.y,q.z,q.w);
+    });    
+  </script>
+</html>
