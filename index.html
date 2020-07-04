@@ -1,24 +1,62 @@
 <html>
   <head>
     <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
-    <script src="https://unpkg.com/aframe-physics-system@1.4.0/dist/aframe-physics-system.min.js"></script>
+    <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script>
+	<script src="src/objmat-loader.js"></script>
   </head>
   <body>
+	<div>
     <a-scene physics background="color: #ccddff">
-      <a-box id="dropped" position="-1 4 -3" rotation="40 45 0" color="#5577D9" dynamic-body></a-box>
-      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="brown" static-body></a-plane>
+	<a-node id="neverLoad" ></a-node>
+		<a-assets>
+			
+			<img id="i0" crossorigin="anonymous" src="images/1.jpg">
+			<a-asset-item id="ny" src="images/untitled1.obj" crossorigin="anonymous"></a-asset-item>
+		</a-assets>
+     <a-sky src="#i0" rotation="0 -90 0"></a-sky>
+	<a-entity  position="0 10 -8" id="stat" objmat-loader="obj: #ny; nmap: /images/untitled.png; envmap: images/1.jpg; refraction: 1.05" ></a-entity>
+     
+     
+	  <a-plane id="floor" position="0 0 -4" rotation="-90 0 0" width="40" height="40" static-body></a-plane>
+	  
     </a-scene>
+	</div>
   </body>
+   
+   
+   
+   
    <script>
-    s=new THREE.Quaternion().setFromEuler(new THREE.Euler(THREE.Math.degToRad(45),THREE.Math.degToRad(45),0,'XYZ')).toArray().toString();
-	q=new THREE.Quaternion().setFromEuler(new THREE.Euler(THREE.Math.degToRad(45),THREE.Math.degToRad(45),0,'XYZ'));
-	e=new THREE.Euler(THREE.Math.degToRad(45),THREE.Math.degToRad(45),0,'XYZ');
-    window.addEventListener('click', function () {
-       // METHOD2 - MOVE THE EXISTING ORANGE
-      document.querySelector("#dropped").body.position.set(-1, 4, -3);
-      document.querySelector("#dropped").body.velocity.set(0, 0, 0);
-      document.querySelector("#dropped").body.angularVelocity.set(0, 0, 0);
-      document.querySelector("#dropped").body.quaternion.set(q.x,q.y,q.z,q.w);
-    });    
+	
+	var st = document.querySelector("#stat");
+	var getRrng = function () { return Math.random()*2 - 1; };
+	var evt = new Event('click');
+	
+	window.addEventListener('click',()=> {
+		st.dispatchEvent(evt);
+	});
+	st.addEventListener('click', e =>{
+			e.target.body.position.set(0, 10, -8);
+			e.target.body.quaternion.set(getRrng(),getRrng(),getRrng(),getRrng());
+			e.target.body.velocity.set(getRrng(), getRrng(), getRrng());
+			e.target.body.angularVelocity.set(getRrng(), getRrng(), getRrng());
+		
+	});
+	document.querySelector("a-scene").addEventListener('loaded', function(){
+		document.querySelector("#floor").object3D.children[0].material.colorWrite = false;
+		
+	});
+	
+    AFRAME.components["look-controls"].Component.prototype.onTouchMove = function (t) {
+							var PI_2 = Math.PI/2,
+							e,
+							o = this.el.sceneEl.canvas,
+							i = this.yawObject,
+							j = this.pitchObject;
+							this.touchStarted && this.data.touchEnabled && (e = 2 * Math.PI * (t.touches[0].pageX - this.touchStart.x) / o.clientWidth, f = 2 * Math.PI * (t.touches[0].pageY - this.touchStart.y) / o.clientHeight, j.rotation.x += .3 * f, i.rotation.y += .5 * e, j.rotation.x = Math.max(-PI_2, Math.min(PI_2, j.rotation.x)), this.touchStart = {
+									x: t.touches[0].pageX,
+									y: t.touches[0].pageY
+								})
+							}
   </script>
 </html>

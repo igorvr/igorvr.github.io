@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Когда-то зимой</title>
+    <meta name="description" content="360&deg gallery">
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	
+    <script src="src/aframe.min.js"></script>
+	<script src="src/objmat-loaderv.js"></script>
+	<script src="src/multitouch-zoom.js"></script>
+	<script type="text/javascript">
+		AFRAME.registerComponent('rax', {
+			
+
+			init: function () {
+				
+				this.el.anim = true;
+				this.el.addEventListener('raycaster-intersected', function (e) {
+					if(e.srcElement.anim){
+						e.srcElement.emit('aniStart');
+						e.srcElement.anim = false;
+					}
+				});
+				this.el.addEventListener('animationend', function (e) {
+					e.srcElement.el.anim = true;
+				});
+			/*	this.el.addEventListener('click', function (e) {
+					console.log(e);
+				});*/
+				/*this.el.addEventListener('raycaster-intersected-cleared', function (e) {
+					console.log(e);
+				});*/
+			}
+		});	
+		console.log('Player hit something!');
+		
+		
+	</script>
+	<style type="text/css">
+	#forward{
+		position: absolute;
+		right: 6px;
+		top: 0;
+		bottom: 0;
+		margin: auto;
+		transform: scale(-1,.7);
+	}
+	#backward{
+		position: absolute;
+		top:0;
+		bottom:0;
+		margin:auto;
+		left:6px;
+		transform: scale(1,.7);
+	}
+	#lSplash.show {
+	display:block;
+    position: fixed;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+	background: lightgrey;
+	}
+	#lSplash.show img{
+		position:absolute;
+		top:50%;
+		left:50%;
+		margin-left:-99px;
+		margin-top:-99px;
+	}
+	#lSplash {
+		display:none;
+	}
+	</style>
+	
+<script id="vertexShader" type="x-shader/x-vertex">
+  varying vec2 vUv; 
+  void main() {
+    vUv = uv;
+
+    vec4 mvPosition = modelViewMatrix * vec4(position, 1.0 );
+    gl_Position = projectionMatrix * mvPosition;
+  }
+
+</script>
+<script id="fragmentShader" type="x-shader/x-fragment">
+
+    uniform vec2 iResolution;
+    uniform float iGlobalTime;
+
+    varying vec2 vUv; 
+
+    void main(void)
+    {
+    float time=iGlobalTime*0.6;
+    vec2 uv = (-1.0 + 2.0 *vUv)* 2.0;
+
+    vec2 uv0=uv;
+    float i0=1.4;
+    float i1=1.9;
+    float i2=1.4;
+    float i4=0.6;
+    for(int s=0;s<20;s++) {
+            vec2 r;
+            r=vec2(cos(uv.y*i0-i4+time/i1),sin(uv.x*i0-i4+time/i1))/i2;
+            r+=vec2(-r.y,r.x)*0.3;
+            uv.xy+=r-0.5;
+            i0*=1.93;
+		    i1*=1.15;
+		    i2*=1.7;
+            i4+=0.65+0.1*time*i1;
+            }
+            float r=sin(uv.x-time)*0.4+0.6;
+            float b=sin(uv.y+time)*0.4+0.6;
+            float g=0.0;
+  
+
+     gl_FragColor = vec4(r,g,b,1.0);
+    }
+	
+
+</script>
+  </head>
+  <body >
+  <div id="lSplash" class="show"><img src="images/ltp.gif"></div>
+    <a-scene>
+		<a-assets>
+			<a-asset-item id="ny" src="images/untitled1.obj" crossorigin="anonymous"></a-asset-item>
+		<!--!!	<a-asset-item id="nm" src="images/untitled.png" crossorigin="anonymous"></a-asset-item> ------->	
+			<img id="i1" src="images/2.jpg">
+			<video id="v1" autoplay loop="true" src="images/1.mp4">
+		</a-assets>
+		
+		<a-camera rotation="25.783 91.322 0" multitouch-zoom>
+			
+			<a-entity rax cursor="fuse: true; fuseTimeout: 500" position="0 0 -1"
+				geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+				material="color: black; shader: flat">
+			</a-entity>
+		</a-camera>
+		<a-entity position="-26.763 -12.648 -0.681">
+		<a-entity class="xbl" rax objmat-loaderv="obj: #ny; nmap: /images/untitled.png; envmap: images/1.mp4; refraction: 1.05"   scale="5 5 5" >
+			<a-animation attribute="rotation" begin="aniStart" to="0 360 0" dur="4500"  easing="ease" ></a-animation>
+		</a-entity>
+		</a-entity>
+		<a-light target=".xbl"></a-light>
+		<a-sky material="src: #v1" rotation="0 180 0" "></a-sky> 
+		
+    </a-scene>
+	
+	
+  </body>
+  <script type="text/javascript">
+	
+	function lSplash(sw){
+			sw? document.querySelector('#lSplash').setAttribute('class','show'): document.querySelector('#lSplash').removeAttribute('class');
+		}
+	document.body.addEventListener('model-loaded',function(){
+	lSplash(0);
+	x=document.querySelector('.xbl');
+	document.querySelector('video').muted='true';
+	document.querySelector('video').play();
+	x.object3D.children[0].children[0].material.envMap.image=document.querySelector('#v1');
+	x.object3D.children[0].children[0].material.envMap.needsUpdate=true;
+	});
+  </script>
+</html>
