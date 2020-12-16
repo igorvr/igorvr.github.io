@@ -1,0 +1,122 @@
+<html>
+  <head>
+    <script src="aframe.min.js"></script>
+    <style type="text/css">
+		#mon{
+			position:absolute;
+			width:200px;
+			border: solid red;
+			background:white;
+			color:black;
+			top:0px;
+		}
+	</style>
+  </head>
+  <body>
+	<div>
+    <a-scene physics background="color: #ccddff" loading-screen="enabled:false">
+	
+		<a-assets>
+			
+			<img id="panorama" crossorigin="anonymous" src="kos.jpg">
+			
+		</a-assets>
+     
+		<a-sky src="#panorama" rotation="0 -90 0" animation="property: rotation; to: 0 270 0; loop: true; dur: 20000; easing: linear;"></a-sky>
+	
+		<a-camera look-controls="vertCT:0"></a-camera>
+     
+	  
+	  
+    </a-scene>
+	
+	
+  </body>
+   
+   
+   
+   
+   <script type="text/javascript">
+   
+  
+	
+	/*var evt = new Event('click');
+	var PI_2 = Math.PI/2;
+	var VertCutOff = 0;
+	var VertCB = -PI_2;
+	var pitchOt = PI_2;
+	var pitchOb =-PI_2;*/
+	
+	
+	
+	document.querySelector("a-scene").addEventListener('loaded', function(){
+		
+	//	VertCutOff = PI_2/90*document.querySelector('a-entity[camera]').components["look-controls"].buildData().VertCutOff;
+		
+	});
+	
+	//AFRAME.components["look-controls"].Component.prototype.schema.VertCutOff = AFRAME.schema.processPropertyDefinition( {default:-28.6});	
+	
+   
+	var hmd = document.querySelector('#mon #hmd');
+	var pitch = document.querySelector('#mon #pitch');
+	var objt = document.querySelector('#mon #obj');
+
+
+
+    /*AFRAME.components["look-controls"].Component.prototype.onTouchMove = function (t) {
+						var e,
+							o = this.el.sceneEl.canvas,
+							i = this.yawObject,
+							j = this.pitchObject;
+							this.touchStarted && this.data.touchEnabled && (e = 2 * Math.PI * (t.touches[0].pageX - this.touchStart.x) / o.clientWidth, f = 2 * Math.PI * (t.touches[0].pageY - this.touchStart.y) / o.clientHeight, j.rotation.x += .3 * f, i.rotation.y += .5 * e, j.rotation.x = Math.max(VertCB, Math.min(VertCutOff, j.rotation.x)), this.touchStart = {
+									x: t.touches[0].pageX,
+									y: t.touches[0].pageY
+								})
+							}
+/*	AFRAME.components["look-controls"].Component.prototype.updateOrientation =  function () {
+      var object3D = this.el.object3D;
+      var pitchObject = this.pitchObject;
+      var yawObject = this.yawObject;
+      var pose;
+      var sceneEl = this.el.sceneEl;
+
+      // In VR mode, THREE is in charge of updating the camera pose.
+      if (sceneEl.is('vr-mode') && sceneEl.checkHeadsetConnected()) {
+        // With WebXR THREE applies headset pose to the object3D matrixWorld internally.
+        // Reflect values back on position, rotation, scale for getAttribute to return the expected values.
+        if (sceneEl.hasWebXR) {
+          pose = sceneEl.renderer.xr.getCameraPose();
+          if (pose) {
+            poseMatrix.elements = pose.transform.matrix;
+            poseMatrix.decompose(object3D.position, object3D.rotation, object3D.scale);
+          }
+        }
+        return;
+      }
+
+        this.updateMagicWindowOrientation();
+	//	this.magicWindowDeltaEuler.x = 1;
+
+      // On mobile, do camera rotation with touch events and sensors.
+      object3D.rotation.x = this.magicWindowDeltaEuler.x + pitchObject.rotation.x;
+      object3D.rotation.y = this.magicWindowDeltaEuler.y + yawObject.rotation.y;
+      object3D.rotation.z = this.magicWindowDeltaEuler.z;
+	  if((object3D.rotation.x > VertCutOff ){
+		pitchOt = VertCutOff - this.magicWindowDeltaEuler.x;
+		pitchOb = VertCB - this.magicWindowDeltaEuler.x;
+    	 object3D.rotation.x = VertCutOff;
+		}
+		if(object3D.rotation.x < VertCB){
+			pitchOb = VertCB - this.magicWindowDeltaEuler.x;
+			pitchOt = VertCutOff - this.magicWindowDeltaEuler.x;
+			object3D.rotation.x = VertCB;
+		}
+	
+	pitch.innerText = pitchObject.rotation.x;
+	hmd.innerText = this.magicWindowDeltaEuler.x;
+	objt.innerText = object3D.rotation.x;
+ 
+  }*/
+  </script>
+</html>

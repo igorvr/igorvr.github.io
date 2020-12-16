@@ -49,11 +49,11 @@ AFRAME.registerComponent('objmat-loader', {
 		  objModel.children[0].material = new THREE.MeshPhongMaterial();
 		  
 		  if( envmapUrl ){
-			new THREE.TextureLoader().load(envmapUrl, function(t){
+			new THREE.TextureLoader().load(envmapUrl, function(t, l = el){
 				self.model.children[0].material.envMap = t;
 				self.model.children[0].material.envMap.mapping = THREE.EquirectangularRefractionMapping;
 				self.model.children[0].material.needsUpdate=true;
-				document.querySelector('#neverLoad').load();
+				alert(l.id);
 				self.model.el.setAttribute('dynamic-body','');
 				
 			});

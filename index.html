@@ -1,36 +1,61 @@
 <html>
   <head>
-    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="//cdn.rawgit.com/donmccurdy/aframe-physics-system/v4.0.1/dist/aframe-physics-system.min.js"></script>
-	<script src="src/objmat-loader.js"></script>
+	<script src="../src/objmat-loader.js"></script>
+	<script src="../src/webvr-polyfill.js"></script>
+	<style type="text/css">
+		#mon{
+			position:absolute;
+			width:200px;
+			border: solid red;
+			background:white;
+			color:black;
+			top:0px;
+		}
+	</style>
   </head>
   <body>
 	<div>
-    <a-scene physics background="color: #ccddff">
-	<a-node id="neverLoad" ></a-node>
+    <a-scene physics background="color: #ccddff" loading-screen="enabled:false">
+	
 		<a-assets>
 			
-			<img id="i0" crossorigin="anonymous" src="images/1.jpg">
+			<img id="i0" crossorigin="anonymous" src="images/kos.jpg">
 			<a-asset-item id="ny" src="images/untitled1.obj" crossorigin="anonymous"></a-asset-item>
 		</a-assets>
      <a-sky src="#i0" rotation="0 -90 0"></a-sky>
-	<a-entity  position="0 10 -8" id="stat" objmat-loader="obj: #ny; nmap: /images/untitled.png; envmap: images/1.jpg; refraction: 1.05" ></a-entity>
+	<a-entity  position="0 10 -8" id="stat" objmat-loader="obj: #ny; nmap: /images/untitled.png; envmap: images/kos.jpg; refraction: 1.05" ></a-entity>
      
      
 	  <a-plane id="floor" position="0 0 -4" rotation="-90 0 0" width="40" height="40" static-body></a-plane>
 	  
     </a-scene>
 	</div>
+	<div id="mon">
+		<span id="hmd"></span><br>
+		<span id="pitch"></span><br>
+		<span id="obj"></span>
+	</div>
+	
+	
   </body>
    
    
    
    
-   <script>
-	
+   <script type="text/javascript">
+   
+   var Pfill = new WebVRPolyfill();
+	var poseMatrix = new THREE.Matrix4();
 	var st = document.querySelector("#stat");
 	var getRrng = function () { return Math.random()*2 - 1; };
 	var evt = new Event('click');
+	var PI_2 = Math.PI/2;
+	var VertCutOff = 0;
+	var VertCB = -PI_2;
+	var pitchOt = PI_2;
+	var pitchOb =-PI_2;
 	
 	window.addEventListener('click',()=> {
 		st.dispatchEvent(evt);
@@ -42,21 +67,102 @@
 			e.target.body.angularVelocity.set(getRrng(), getRrng(), getRrng());
 		
 	});
+	
 	document.querySelector("a-scene").addEventListener('loaded', function(){
 		document.querySelector("#floor").object3D.children[0].material.colorWrite = false;
+		VertCutOff = PI_2/90*document.querySelector('a-entity[camera]').components["look-controls"].buildData().VertCutOff;
 		
 	});
 	
+	AFRAME.components["look-controls"].Component.prototype.schema.VertCutOff = AFRAME.schema.processPropertyDefinition( {default:-28.6});	
+	
+   
+	var hmd = document.querySelector('#mon #hmd');
+	var pitch = document.querySelector('#mon #pitch');
+	var objt = document.querySelector('#mon #obj');
+
+
+	AFRAME.components["look-controls"].Component.prototype.onMouseMove = function (event) {
+    
+    var direction;
+    var movementX;
+    var movementY;
+    var pitchObject = this.pitchObject;
+    var previousMouseEvent = this.previousMouseEvent;
+    var yawObject = this.yawObject;
+
+    // Not dragging or not enabled.
+    if (!this.data.enabled || (!this.mouseDown && !this.pointerLocked)) { return; }
+
+    // Calculate delta.
+    if (this.pointerLocked) {
+      movementX = event.movementX || event.mozMovementX || 0;
+      movementY = event.movementY || event.mozMovementY || 0;
+    } else {
+      movementX = event.screenX - previousMouseEvent.screenX;
+      movementY = event.screenY - previousMouseEvent.screenY;
+    }
+    this.previousMouseEvent = event;
+
+    // Calculate rotation.
+    direction = this.data.reverseMouseDrag ? 1 : -1;
+    yawObject.rotation.y += movementX * 0.002 * direction;
+    pitchObject.rotation.x += movementY * 0.002 * direction;
+    pitchObject.rotation.x = Math.max(pitchOb, Math.min(pitchOt, pitchObject.rotation.x));
+  }
     AFRAME.components["look-controls"].Component.prototype.onTouchMove = function (t) {
-							var PI_2 = Math.PI/2,
-							e,
+						var e,
 							o = this.el.sceneEl.canvas,
 							i = this.yawObject,
 							j = this.pitchObject;
-							this.touchStarted && this.data.touchEnabled && (e = 2 * Math.PI * (t.touches[0].pageX - this.touchStart.x) / o.clientWidth, f = 2 * Math.PI * (t.touches[0].pageY - this.touchStart.y) / o.clientHeight, j.rotation.x += .3 * f, i.rotation.y += .5 * e, j.rotation.x = Math.max(-PI_2, Math.min(PI_2, j.rotation.x)), this.touchStart = {
+							this.touchStarted && this.data.touchEnabled && (e = 2 * Math.PI * (t.touches[0].pageX - this.touchStart.x) / o.clientWidth, f = 2 * Math.PI * (t.touches[0].pageY - this.touchStart.y) / o.clientHeight, j.rotation.x += .3 * f, i.rotation.y += .5 * e, j.rotation.x = Math.max(VertCB, Math.min(VertCutOff, j.rotation.x)), this.touchStart = {
 									x: t.touches[0].pageX,
 									y: t.touches[0].pageY
 								})
 							}
+	AFRAME.components["look-controls"].Component.prototype.updateOrientation =  function () {
+      var object3D = this.el.object3D;
+      var pitchObject = this.pitchObject;
+      var yawObject = this.yawObject;
+      var pose;
+      var sceneEl = this.el.sceneEl;
+
+      // In VR mode, THREE is in charge of updating the camera pose.
+      if (sceneEl.is('vr-mode') && sceneEl.checkHeadsetConnected()) {
+        // With WebXR THREE applies headset pose to the object3D matrixWorld internally.
+        // Reflect values back on position, rotation, scale for getAttribute to return the expected values.
+        if (sceneEl.hasWebXR) {
+          pose = sceneEl.renderer.xr.getCameraPose();
+          if (pose) {
+            poseMatrix.elements = pose.transform.matrix;
+            poseMatrix.decompose(object3D.position, object3D.rotation, object3D.scale);
+          }
+        }
+        return;
+      }
+
+        this.updateMagicWindowOrientation();
+	//	this.magicWindowDeltaEuler.x = 1;
+
+      // On mobile, do camera rotation with touch events and sensors.
+      object3D.rotation.x = this.magicWindowDeltaEuler.x + pitchObject.rotation.x;
+      object3D.rotation.y = this.magicWindowDeltaEuler.y + yawObject.rotation.y;
+      object3D.rotation.z = this.magicWindowDeltaEuler.z;
+	  if(object3D.rotation.x > VertCutOff){
+		pitchOt = VertCutOff - this.magicWindowDeltaEuler.x;
+		pitchOb = VertCB - this.magicWindowDeltaEuler.x;
+    	 object3D.rotation.x = VertCutOff;
+		}
+		if(object3D.rotation.x < VertCB){
+			pitchOb = VertCB - this.magicWindowDeltaEuler.x;
+			pitchOt = VertCutOff - this.magicWindowDeltaEuler.x;
+			object3D.rotation.x = VertCB;
+		}
+	
+	pitch.innerText = pitchObject.rotation.x;
+	hmd.innerText = this.magicWindowDeltaEuler.x;
+	objt.innerText = object3D.rotation.x;
+ 
+  }
   </script>
 </html>
