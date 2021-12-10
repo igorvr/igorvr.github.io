@@ -1,0 +1,141 @@
+#cfill .cdatew div{
+  position:absolute;
+  height: 100%;
+  width: 100%;
+}
+.d1, .d2, .d3, .d4, .d5, .d6{
+  border-top: 2px solid black;
+   border-right: 2px solid black;
+   border-bottom: 2px solid black;
+} 
+.d7{
+  border-top: 2px solid black;
+  border-bottom: 2px solid black;
+}
+.d8, .d9, .d10, .d11, .d12, .d15, .d16, .d17, .d18, .d19, .d27, .d13, .d20, .d22, .d23, .d24, .d25, .d26{
+    border-right: 2px solid black;
+   border-bottom: 2px solid black;
+} 
+.d29, .d30, .d31{
+    border-right: 2px solid black;
+} 
+.d14, .d21, .d28{
+    border-bottom: 2px solid black;
+} 
+#calwrap{
+  width: 100%;
+	position:relative;
+}
+
+.cmonth {
+  top:0px;
+  display: flex;
+  flex-wrap: wrap;
+  width:90%;
+  position:absolute;
+  padding:0 5% 1%;
+}
+.cheadw{
+  flex:100%;
+  position:relative;
+}
+.cheadw::after{
+  content:" ";
+  display:block;
+  padding-bottom:13%
+}
+.chead{
+  color: #ff8b00;
+  position:absolute;
+  width:100%;
+  height:100%;
+  text-align: center;
+  font-size: 80%;
+  line-height:225%;
+}
+.cdate{
+  color: #666666;
+  position:absolute;
+  width:100%;
+  height:100% ;
+  text-align: center;
+  transition: font-size .3s;
+  font-size: 70%
+
+  
+}
+.cdatew{
+  flex:0 14.2857%;
+  position: relative;
+  line-height:100%;
+}
+.cdatew::after{
+  content:" ";
+  padding-bottom:62%;
+  display:block;
+}
+.cdatew:hover .cdate{
+   font-size:100%;
+  color: #ff8b00;
+}
+.cdancor{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+}
+#cfill{
+  position:relative;
+  z-index:3;
+  background-image: url('wcal.png');
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+.dfill{
+  flex:100%;
+}
+.cmnamew{
+  flex:0 8.3333%;
+    position: relative;
+  
+  line-height: 32%;
+}
+.cmnamew::after{
+  content:" ";
+  padding-bottom:40%;
+  display: block;
+}
+.cmname{
+  position:absolute;
+  height:100%;
+  right:0px;
+  left:0px;
+  text-align: center;
+  font-size: 21%;
+  cursor: pointer;
+  color: #666666;
+}
+.cmname.m1, .cmname.m2, .cmname.m3, .cmname.m4, .cmname.m5, .cmname.m6, .cmname.m7, .cmname.m8, .cmname.m9, .cmname.m10, .cmname.m11, .cmname.m12{
+  border-top:2px solid black;
+ // border-right:1px solid black;
+ 
+}
+/*.cmname.m12{
+   border-top:1px solid black;
+}*/
+.mnthis{
+  color: #ff8b00;
+  border-right:2px solid black;
+  border-left:2px solid black;
+  border-top:none !important;
+}
+.mnthis.m12{
+   border-right:none !important;
+}
+.mnthis.m1{
+  border-left:none !important;
+}
+.nlong{display:block}
+.nshort{
+  display:none;
+  
+}
